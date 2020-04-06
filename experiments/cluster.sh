@@ -15,7 +15,7 @@ manual_restart(){
 	$flintrock run-command --master-only $cluster_name '/home/ec2-user/spark/sbin/stop-all.sh;/home/ec2-user/hadoop/sbin/stop-dfs.sh;'
 
 	echo "configure"
-	$flintrock run-command $cluster_name 'echo "export JAVA_HOME="/home/ec2-user/jdk1.8.0_241"" >> /home/ec2-user/hadoop/conf/hadoop-env.sh;'
+	# $flintrock run-command $cluster_name 'echo "export JAVA_HOME="/home/ec2-user/jdk1.8.0_241"" >> /home/ec2-user/hadoop/conf/hadoop-env.sh;'
 
 	$flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/bin/hdfs namenode -format -nonInteractive || true;'
 	
@@ -114,7 +114,7 @@ launch() {
 gen_data(){
 	cluster_name=$1
 
-	$flintrock run-command $cluster_name 'sudo yum -y install git; git clone https://github.com/SimonZYC/multicloud-data-analytics.git'
+	# $flintrock run-command $cluster_name 'sudo yum -y install git; git clone https://github.com/SimonZYC/multicloud-data-analytics.git'
 
 	source ~/.aws/credentials_s
 
@@ -133,7 +133,7 @@ gen_data(){
 	temp=${temp//awsAccessKeyId/$aws_access_key_id}
 	temp=${temp//awsSecretAccessKey/$aws_secret_access_key}
 
-	$flintrock run-command $cluster_name $temp
+	$flintrock run-command $cluster_name "$temp"
 
 	manual_restart $cluster_name
 }
