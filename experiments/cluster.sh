@@ -12,7 +12,7 @@ manual_restart(){
 	cluster_name=$1
 
 	echo "stop all"
-	$flintrock run-command --master-only $cluster_name '/home/ec2-user/spark/sbin/stop-all.sh;/home/ec2-user/alluxio/bin/alluxio-stop.sh all;/home/ec2-user/hadoop/sbin/stop-dfs.sh;'
+	$flintrock run-command --master-only $cluster_name '/home/ec2-user/spark/sbin/stop-all.sh;/home/ec2-user/hadoop/sbin/stop-dfs.sh;'
 
 	echo "configure"
 	$flintrock run-command $cluster_name 'echo "export JAVA_HOME="/home/ec2-user/jdk1.8.0_241"" >> /home/ec2-user/hadoop/conf/hadoop-env.sh;'
@@ -20,7 +20,7 @@ manual_restart(){
 	$flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/bin/hdfs namenode -format -nonInteractive || true;'
 	
 	echo "restart all"
-	$flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/sbin/start-dfs.sh; /home/ec2-user/alluxio/bin/alluxio format; /home/ec2-user/alluxio/bin/alluxio-start.sh all SudoMount; /home/ec2-user/spark/sbin/start-all.sh;'
+	$flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/sbin/start-dfs.sh; /home/ec2-user/spark/sbin/start-all.sh;'
 
 	echo "manual restart finnished"
 }
@@ -114,17 +114,28 @@ launch() {
 gen_data(){
 	cluster_name=$1
 
+	$flintrock run-command $cluster_name 'sudo yum -y install git; git clone https://github.com/SimonZYC/multicloud-data-analytics.git'
 
-	$flintrock run-command $cluster_name 'git clone '
+	source ~/.aws/credentials_s
 
-	$flintrock run-command $cluster_name 'sed -i "/<\/configuration>/d" /home/ec2-user/hadoop/conf/core-site.xml;
+	temp='bash multicloud-data-analytics/experiments/edit.sh /home/ec2-user/hadoop/conf/core-site.xml; sed -i "/<\/configuration>/d" /home/ec2-user/hadoop/conf/core-site.xml;
 	echo "
 	  <property>
-	    <name>fs.alluxio.impl</name>
-	    <value>alluxio.hadoop.FileSystem</value>
-	  </property>
+    	<name>fs.s3a.access.key</name>
+    	<value>awsAccessKeyId</value>
+  	  </property>
+      <property>
+    	<name>fs.s3a.secret.key</name>
+    	<value>awsSecretAccessKey</value>
+      </property>
 	</configuration>" >> /home/ec2-user/hadoop/conf/core-site.xml
 	'
+	temp=${temp//awsAccessKeyId/$aws_access_key_id}
+	temp=${temp//awsSecretAccessKey/$aws_secret_access_key}
+
+	$flintrock run-command $cluster_name $temp
+
+	manual_restart $cluster_name
 }
 
 start() {
@@ -198,6 +209,8 @@ else
 		conf_alluxio)			configure_alluxio $2
 								;;             
 		man_start)				manual_restart $2
+								;;
+		gen_data)				gen_data $2
 								;;
         * )                     usage
     esac
