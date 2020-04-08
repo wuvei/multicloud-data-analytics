@@ -23,6 +23,7 @@ do
     --conf spark.driver.cores=3
     --conf spark.driver.memory=10g
     --conf spark.executor.memory=4g
+    --conf spark.local.dir=/media/ephemeral0
     --packages com.amazonaws:aws-java-sdk:1.11.760,org.apache.hadoop:hadoop-aws:3.2.1
     --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16 \
     --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
