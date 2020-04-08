@@ -6,6 +6,8 @@ cd /home/ec2-user/ && git clone https://github.com/SimonZYC/tpch-spark.git
 cd /home/ec2-user/tpch-spark/dbgen
 make
 
+cd /home/ec2-user/tpch-spark && sbt package
+
 [ -d "/home/ec2-user/metrics" ] && rm -rf /home/ec2-user/metrics
 mkdir -p /home/ec2-user/metrics
 
