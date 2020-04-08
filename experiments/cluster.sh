@@ -95,13 +95,16 @@ launch() {
 
 	source ~/.aws/credentials_s
 
-	temp='echo "spark.hadoop.fs.s3a.access.key \"awsAccessKeyId\"" >> /home/ec2-user/spark/conf/spark-defaults.conf;
-	echo "spark.hadoop.fs.s3a.secret.key \"awsSecretAccessKey\"" >> /home/ec2-user/spark/conf/spark-defaults.conf;
+	temp='echo "spark.hadoop.fs.s3a.access.key awsAccessKeyId" >> /home/ec2-user/spark/conf/spark-defaults.conf;
+	echo "spark.hadoop.fs.s3a.secret.key awsSecretAccessKey" >> /home/ec2-user/spark/conf/spark-defaults.conf;
 	echo "spark.hadoop.fs.s3a.impl org.apache.hadoop.fs.s3a.S3AFileSystem" >> /home/ec2-user/spark/conf/spark-defaults.conf;'
 	temp=${temp//awsAccessKeyId/$aws_access_key_id}
 	temp=${temp//awsSecretAccessKey/$aws_secret_access_key}
 
 	flintrock run-command $cluster_name "$temp"
+
+	flintrock run-command $cluster_name 'echo "export SPARK_DIST_CLASSPATH=$(hadoop classpath)" >> /home/ec2-user/spark/conf/spark-env.sh'
+
 	manual_restart $cluster_name
 }
 

@@ -149,6 +149,13 @@ launch() {
 	# echo "setup wondershaper for bandwidth limitation"
 	flintrock run-command $cluster_name "sudo yum -y install tc; git clone  https://github.com/magnific0/wondershaper.git; cd wondershaper; sudo make install;" # sudo systemctl enable wondershaper.service; sudo systemctl start wondershaper.service"
 
+	flintrock run-command $cluster_name 'cp /home/ec2-user/hadoop/share/hadoop/tools/lib/aws-java-sdk-* /home/ec2-user/hadoop/share/hadoop/common/lib/; cp /home/ec2-user/hadoop/share/hadoop/tools/lib/hadoop-aws-2.8.5.jar /home/ec2-user/hadoop/share/hadoop/common/lib/'
+	flintrock run-command $cluster_name 'cp /home/ec2-user/hadoop/share/hadoop/tools/lib/aws-java-sdk-* /home/ec2-user/spark/jars/; cp /home/ec2-user/hadoop/share/hadoop/tools/lib/hadoop-aws-2.8.5.jar /home/ec2-user/spark/jars/'
+
+	flintrock run-command $cluster_name 'rm /home/ec2-user/spark/jars/aws-java-sdk-*; rm /home/ec2-user/spark/jars/hadoop-aws-2.8.5.jar'
+
+	flintrock run-command $cluster_name 'wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -P /home/ec2-user/spark/jars/; wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar -P /home/ec2-user/spark/jars/'
+	
 	# restart 
 	echo "Restart"
 
