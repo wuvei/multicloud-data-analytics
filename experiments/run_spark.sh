@@ -28,8 +28,7 @@ do
     --packages ch.cern.sparkmeasure:spark-measure_2.11:0.16 \
     --conf spark.extraListeners=ch.cern.sparkmeasure.FlightRecorderStageMetrics \
     --conf spark.sparkmeasure.outputFilename=/home/ec2-user/metrics/q17_${i} \
-    /home/ec2-user/tpch-spark/target/scala-2.11/spark-tpc-h-queries_2.11-1.0.jar 17 $i \
-    > /home/ec2-user/logs/scale${i}_query17.log 2>&1
+    /home/ec2-user/tpch-spark/target/scala-2.11/spark-tpc-h-queries_2.11-1.0.jar 17 $i > /home/ec2-user/logs/scale${i}_query17.log 2>&1
 done
 
 
